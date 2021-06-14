@@ -279,13 +279,13 @@ public class UDPClient implements Runnable
     }
 
 
+	@SuppressWarnings("resource")
 	@Override
-	public void run() 
+	public void run()
 	{
 		ExecutorService executorService = Executors.newFixedThreadPool(10);
 		DatagramSocket datagramSocket;
-		try {datagramSocket = new DatagramSocket(Config.PORT);}
-		catch (SocketException e1) {e1.printStackTrace();}
+		datagramSocket = new DatagramSocket(Config.PORT);
 		
 		
 		//watek odbierajacy
