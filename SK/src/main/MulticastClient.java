@@ -5,9 +5,11 @@ import java.net.DatagramSocket;
 import java.net.SocketTimeoutException;
 
 
-public class MulticastClient {
+public class MulticastClient 
+{
 
-public static void main(String[] args) throws Exception{
+public static void main(String[] args) throws Exception
+	{
        DatagramSocket s = new DatagramSocket();
 
        byte[] message = "Test".getBytes("utf8");
