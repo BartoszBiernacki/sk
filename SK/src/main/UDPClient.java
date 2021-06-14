@@ -1,25 +1,31 @@
 package main;
 
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 
-public class UDPClient 
+public class UDPClient implements Runnable
 {
 	public static LinkedList<String> ListOfNamesOfWorkingKnots = new LinkedList<String>();
-	
 	LinkedList<String> ListOfIdMessages;
 	LinkedList<String> ListOfAskedServers;
+	int clientID;
 	
-	public UDPClient()
+	public UDPClient(int id)
 	{
+		this.clientID =id;
 		ListOfIdMessages =  new LinkedList<String>();
 		ListOfAskedServers =  new LinkedList<String>();
 	}
@@ -265,10 +271,85 @@ public class UDPClient
     	String message = createUserMessageToSend();
     	String serverName = getServerName();
     	
-    	UDPClient Client1 =  new UDPClient();
+    	UDPClient Client1 =  new UDPClient(1);
     	Client1.sendMessage(numberOfNodes, serverName, message);
     	System.out.println("x");
     	
         
     }
+
+
+	@Override
+	public void run() 
+	{
+		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		DatagramSocket datagramSocket;
+		try {datagramSocket = new DatagramSocket(Config.PORT);}
+		catch (SocketException e1) {e1.printStackTrace();}
+		
+		
+		//watek odbierajacy
+		Runnable connection = new Runnable() 
+		{	
+			@Override
+			public void run() 
+			{
+				while (true)
+				{	//otwarcie gniazda z okreslonym portem
+					try 
+					{	//serwer w petli odbiera przychodzace pakiety
+						while (true)
+						{
+							DatagramPacket recivedPacket = new DatagramPacket(new byte[Config.BUFFER_SIZE], Config.BUFFER_SIZE);
+							datagramSocket.receive(recivedPacket);
+							int length = recivedPacket.getLength();
+							String message = new String(recivedPacket.getData(), 0, length, "utf8");
+							
+							System.out.println("Watek odbierajacy: " + message + " IP: " + recivedPacket.getAddress().toString() + " PORT: " + recivedPacket.getPort());
+						}
+					} catch (SocketException e) 
+					{
+						e.printStackTrace();
+					}
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+				
+			}
+		};
+		executorService.submit(connection);
+		
+		
+		//watek wysylajacy
+		Runnable connection2 = new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				while (true)
+				{
+					try 
+					{
+						byte[] stringContents = ("Tekst wysylany na broadcast").getBytes("utf8");
+						DatagramPacket sentPacket = new DatagramPacket(stringContents, stringContents.length);
+						sentPacket.setAddress(Config.BCAST_ADDRESS);
+						sentPacket.setPort(Config.PORT);
+						
+						datagramSocket.send(sentPacket);
+						System.out.println("Watek wysylajacy: tekst wysylany na broadcast co 1s");
+						Thread.sleep(1000);
+					}
+					catch (Exception e) 
+					{
+						e.printStackTrace();
+					}
+				}
+				
+			}
+		};
+		executorService.submit(connection2);
+		
+	}
 }
