@@ -54,6 +54,15 @@ public class UDPClient
        s.close();
     }
 	
+	public static String getInputFromConsole()
+	{
+		@SuppressWarnings("resource")
+		Scanner scanner = new Scanner(System.in);
+		String input = scanner.nextLine();
+		
+		return input;
+	}
+	
 	public static int getNumberOfNodesFromUser() throws Exception
 	{
 		meetNodes();
@@ -64,34 +73,44 @@ public class UDPClient
 		System.out.println("Maksmalna ilsoc dostepnych wezlow to: " + ListOfNamesOfWorkingKnots.size());
 		System.out.println("Wprowadz liczbe wezlow: ");
 		
-		int numberOfNodesInBetween =0;
+		int numberOfNodesInBetween = 0;
 		
-		Scanner sc = new Scanner(System.in);
+		
+		boolean typeInError = false;
 		while (true)
 		{
-	        numberOfNodesTypedInByUserString = sc.nextLine();
-	        numberOfNodesInBetween = Integer.parseInt(numberOfNodesTypedInByUserString);
-	        if (numberOfNodesInBetween < 0 || numberOfNodesInBetween > ListOfNamesOfWorkingKnots.size() )
+	        numberOfNodesTypedInByUserString = getInputFromConsole();
+	        try 
 	        {
-	        	System.out.println("Wprowadz poprawna liczbe calkowita z przedzialu od 0 do " + ListOfNamesOfWorkingKnots.size());
-	        }
-	        else 
+	        	 numberOfNodesInBetween = Integer.parseInt(numberOfNodesTypedInByUserString);
+	        	 typeInError = false;
+			} catch (Exception e) 
 	        {
-	        	break;
+				System.out.println("Wprowadz poprawna liczbe calkowita z przedzialu od 0 do " + ListOfNamesOfWorkingKnots.size());
+				typeInError = true;
 			}
+	        
+	        if(!typeInError)
+	        {
+	        	if (numberOfNodesInBetween < 0 || numberOfNodesInBetween > ListOfNamesOfWorkingKnots.size() )
+		        {
+		        	System.out.println("Wprowadz poprawna liczbe calkowita z przedzialu od 0 do " + ListOfNamesOfWorkingKnots.size());
+		        }
+		        else 
+		        {
+		        	break;
+				}
+	        }
+	        
 		}
-        sc.close();
         return numberOfNodesInBetween;
 	}
 	
 	public static String getServerName ()
-	{
-		String sreverName;
+	{	
         System.out.println("Wprowadz nazwe servera:");
-        Scanner sc = new Scanner(System.in);
-        sreverName = sc.nextLine();
+        String sreverName = getInputFromConsole();
         
-        sc.close();
         return  sreverName;
 	}
 	
@@ -105,6 +124,12 @@ public class UDPClient
 	    {
 	        Thread.currentThread().interrupt();
 	    }
+	}
+	
+	public static int getRandomNumberUsingNextInt(int min, int max) 
+	{
+	    Random random = new Random();
+	    return random.nextInt(max - min) + min;
 	}
 	
 	public static LinkedList<String> createListOfNodesToVisit(int numberOfNodes) throws Exception
@@ -153,20 +178,12 @@ public class UDPClient
         return isMessageDelivered;
 	}
 	
-	public static int getRandomNumberUsingNextInt(int min, int max) 
-	{
-	    Random random = new Random();
-	    return random.nextInt(max - min) + min;
-	}
 	
 	public static String createUserMessageToSend()
 	{
-		String message;
         System.out.println("Wprowadz wiadomosc do przeslania:");
-        Scanner sc = new Scanner(System.in);
-        message = sc.nextLine();
+        String message = getInputFromConsole();
         
-        sc.close();
         return message;
 	}
 	
