@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
 
+
+
 public class UDPClient 
 {
 	public static LinkedList<String> ListOfNamesOfWorkingKnots = new LinkedList<String>();
@@ -248,6 +250,7 @@ public class UDPClient
     	
     	UDPClient Client1 =  new UDPClient();
     	Client1.sendMessage(numberOfNodes, serverName, message);
+    	System.out.println("x");
     	
         
     }
