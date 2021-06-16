@@ -76,7 +76,7 @@ public class UDPClient implements Runnable
 		String numberOfNodesTypedInByUserString = "";
 		
 		System.out.println("Przez ile wezlow chcesz aby szla twoja wiadomosc?");
-		System.out.println("Maksmalna ilsoc dostepnych wezlow to: " + ListOfNamesOfWorkingKnots.size());
+		System.out.println("Maksmalna ilosc dostepnych wezlow to: " + ListOfNamesOfWorkingKnots.size());
 		System.out.println("Wprowadz liczbe wezlow: ");
 		
 		int numberOfNodesInBetween = 0;
@@ -162,7 +162,7 @@ public class UDPClient implements Runnable
 		InetAddress serverAddress = InetAddress.getByName(nodeID);
 
         DatagramSocket socket = new DatagramSocket(); //Otwarcie gniazda
-        byte[] stringContents = message.getBytes("utf8"); //Pobranie strumienia bajtów z wiadomosci
+        byte[] stringContents = message.getBytes("utf8"); //Pobranie strumienia bajtÃ³w z wiadomosci
 
         DatagramPacket sentPacket = new DatagramPacket(stringContents, stringContents.length);
         sentPacket.setAddress(serverAddress);
