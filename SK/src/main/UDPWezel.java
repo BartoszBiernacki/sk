@@ -9,23 +9,24 @@ import java.net.InetAddress;
 
 public class UDPWezel {
 	
-	String nazwa;
+	String IPadress;
 	InetAddress powrotAddress; //adres wezla od ktorego odbieramy (dla wielu klientow to bedzie lista)
 	int powrotPort; //port wezla od ktorego odbieramy (dla wielu klientow to bedzie lista)
 	
 	static int counter = 0; //licznik wywolanych wezlow
 	
-	public UDPWezel(String nzw) {
-		nazwa = nzw;
+	public UDPWezel() {
+		IPadress = Config.geterateIP();
 		counter = counter + 1;
 	}
 	
     public static void main(String[] args) throws Exception{
     	
     	//konstruktor
-    	UDPWezel wezel = new UDPWezel(Integer.toString(counter));
+    	UDPWezel wezel = new UDPWezel();
     	System.out.print("\nUtworzono wezel nr ");
     	System.out.print(counter);
+    	System.out.println("O aresie IP: " + wezel.IPadress );
     	System.out.println();
     	
         //Otwarcie gniazda z okreslonym portem
@@ -48,7 +49,7 @@ public class UDPWezel {
             if(message == "Say your name!") //klient sie polaczyl i pyta o nazwe
             {
             	//podanie nazwy wezla do klienta
-            	byteResponse = wezel.nazwa.getBytes("utf8");
+            	byteResponse = wezel.IPadress.getBytes("utf8");
                 DatagramPacket response = new DatagramPacket(
                 			byteResponse, byteResponse.length, address, port);
                 Thread.sleep(1000);

@@ -10,7 +10,6 @@ import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,15 +20,17 @@ public class UDPClient implements Runnable
 	public static LinkedList<String> ListOfNamesOfWorkingKnots = new LinkedList<String>();
 	LinkedList<String> ListOfIdMessages;
 	LinkedList<String> ListOfAskedServers;
-	int clientID;
+	String clientIP;
 	
-	public UDPClient(int id)
+	public UDPClient()
 	{
-		this.clientID =id;
+		this.clientIP = Config.geterateIP();
 		ListOfIdMessages =  new LinkedList<String>();
 		ListOfAskedServers =  new LinkedList<String>();
 	}
 
+	
+	
 	
 	public static void meetNodes( ) throws Exception
 	{
@@ -132,11 +133,7 @@ public class UDPClient implements Runnable
 	    }
 	}
 	
-	public static int getRandomNumberUsingNextInt(int min, int max) 
-	{
-	    Random random = new Random();
-	    return random.nextInt(max - min) + min;
-	}
+	
 	
 	public static LinkedList<String> createListOfNodesToVisit(int numberOfNodes) throws Exception
 	{
@@ -146,7 +143,7 @@ public class UDPClient implements Runnable
 		
 		for (int i=0; i <numberOfNodes; i++)
 		{
-			int n = getRandomNumberUsingNextInt(0, ListOfNotVisitedNodes.size()-1);
+			int n = Config.getRandomNumberUsingNextInt(0, ListOfNotVisitedNodes.size()-1);
 			ListOfNodesToVisit.add(ListOfNotVisitedNodes.get(n));
 			ListOfNotVisitedNodes.remove(n);
 			if (ListOfNotVisitedNodes.size() == 0)	//zabezpieczenie
@@ -157,31 +154,29 @@ public class UDPClient implements Runnable
 		return ListOfNodesToVisit;
 	}
 	
-	public static boolean sendAnythingToSpecyficNode(String message, String nodeID) throws Exception 
+	public static String sendAnythingToSpecyficNode(String message, String nodeID) throws Exception 
 	{
 		InetAddress serverAddress = InetAddress.getByName(nodeID);
 
         DatagramSocket socket = new DatagramSocket(); //Otwarcie gniazda
         byte[] stringContents = message.getBytes("utf8"); //Pobranie strumienia bajtów z wiadomosci
 
-        DatagramPacket sentPacket = new DatagramPacket(stringContents, stringContents.length);
-        sentPacket.setAddress(serverAddress);
-        sentPacket.setPort(Config.PORT);
+        DatagramPacket sentPacket = new DatagramPacket(stringContents, stringContents.length, serverAddress, Config.PORT);
         socket.send(sentPacket);
         
         //Odbiera potwierdzenie otrzymania wiadomosci z serwera
         DatagramPacket recievePacket = new DatagramPacket( new byte[Config.BUFFER_SIZE], Config.BUFFER_SIZE);
         socket.setSoTimeout(1010);
 
-        boolean isMessageDelivered = false;
+        String answer = null;
         try{
             socket.receive(recievePacket);
-            isMessageDelivered = true;
+            answer = new String(recievePacket.getData());
         }catch (SocketTimeoutException ste){
-            isMessageDelivered = false;
+        	answer = null;
         }
         socket.close();
-        return isMessageDelivered;
+        return answer;
 	}
 	
 	
@@ -229,7 +224,7 @@ public class UDPClient implements Runnable
 		ListOfNodes.add(serverName);
 	    for(int i=0; i<3; i++)
 	    {
-	    	if (sendAnythingToSpecyficNode(messageID, ListOfNodes.getFirst()))
+	    	if (sendAnythingToSpecyficNode(messageID, ListOfNodes.getFirst()) != null)
 	    	{
 	    		indicator = true;
 	    		break;
@@ -271,7 +266,7 @@ public class UDPClient implements Runnable
     	String message = createUserMessageToSend();
     	String serverName = getServerName();
     	
-    	UDPClient Client1 =  new UDPClient(1);
+    	UDPClient Client1 =  new UDPClient();
     	Client1.sendMessage(numberOfNodes, serverName, message);
     	System.out.println("x");
     	
