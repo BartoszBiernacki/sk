@@ -11,11 +11,11 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 
-public class UDPClient implements Runnable
+
+public class UDPClient //implements Runnable
 {
 	public static LinkedList<String> ListOfIPofWorkingKnots = new LinkedList<String>();
 	LinkedList<String> ListOfIdMessages;
@@ -114,6 +114,7 @@ public class UDPClient implements Runnable
 	
 	public static String getServerName ()
 	{	
+		
         System.out.println("Wprowadz nazwe servera:");
         String sreverName = getInputFromConsole();
         
@@ -234,7 +235,7 @@ public class UDPClient implements Runnable
 	}
 	
 	
-	public boolean sendMessage(int numberOfNodes, String serverName, String userMessage) throws Exception
+	public String sendMessage(int numberOfNodes, String serverName, String userMessage) throws Exception
 	{
 		
 		LinkedList<String> ListOfNodes = createListOfNodesToVisit(numberOfNodes);
@@ -249,10 +250,10 @@ public class UDPClient implements Runnable
 		ListOfAskedServers.add(serverName);
 		wait(50);
 		
-		sendAnythingToSpecyficNode(userMessage, ListOfNodes.getFirst());
+		String response = sendAnythingToSpecyficNode(userMessage, ListOfNodes.getFirst());
 		wait(50);
 		
-		return true;
+		return response;
 	}
 	
 	
@@ -265,14 +266,15 @@ public class UDPClient implements Runnable
     	String message = createUserMessageToSend();
     	String serverName = getServerName();
     	
-    	UDPClient Client1 =  new UDPClient();
-    	Client1.sendMessage(numberOfNodes, serverName, message);
-    	System.out.println("x");
     	
-        
+    	UDPClient Client1 =  new UDPClient();
+    	String response = Client1.sendMessage(numberOfNodes, serverName, message);
+    	
+    	System.out.println(response);
     }
 
 
+    /*
 	@SuppressWarnings("resource")
 	@Override
 	public void run()
@@ -346,4 +348,5 @@ public class UDPClient implements Runnable
 		executorService.submit(connection2);
 		
 	}
+	*/
 }
