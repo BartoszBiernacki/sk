@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 
 public class UDPClient implements Runnable
 {
-	public static LinkedList<String> ListOfNamesOfWorkingKnots = new LinkedList<String>();
+	public static LinkedList<String> ListOfIPofWorkingKnots = new LinkedList<String>();
 	LinkedList<String> ListOfIdMessages;
 	LinkedList<String> ListOfAskedServers;
 	String clientIP;
@@ -30,12 +30,10 @@ public class UDPClient implements Runnable
 	}
 
 	
-	
-	
 	public static void meetNodes( ) throws Exception
 	{
        DatagramSocket s = new DatagramSocket();
-       ListOfNamesOfWorkingKnots = new LinkedList<String>();
+       ListOfIPofWorkingKnots = new LinkedList<String>();
        
        byte[] message = "Say your name!".getBytes("utf8");
 
@@ -50,8 +48,9 @@ public class UDPClient implements Runnable
     	   DatagramPacket response = new DatagramPacket(new byte[Config.BUFFER_SIZE], Config.BUFFER_SIZE);
            try{
                s.receive(response);
-               String nazwaWezlaKtoryOdpowiedzial = new String(response.getData(), 0,  response.getLength(), "utf8");
-               ListOfNamesOfWorkingKnots.add(nazwaWezlaKtoryOdpowiedzial);
+               String IPwezlaKtoryOdpowiedzial = response.getAddress().toString();
+               //String nazwaWezlaKtoryOdpowiedzial = new String(response.getData(), 0,  response.getLength(), "utf8");
+               ListOfIPofWorkingKnots.add(IPwezlaKtoryOdpowiedzial);
            	}
            catch (SocketTimeoutException e)
            {
@@ -77,7 +76,7 @@ public class UDPClient implements Runnable
 		String numberOfNodesTypedInByUserString = "";
 		
 		System.out.println("Przez ile wezlow chcesz aby szla twoja wiadomosc?");
-		System.out.println("Maksmalna ilosc dostepnych wezlow to: " + ListOfNamesOfWorkingKnots.size());
+		System.out.println("Maksmalna ilosc dostepnych wezlow to: " + ListOfIPofWorkingKnots.size());
 		System.out.println("Wprowadz liczbe wezlow: ");
 		
 		int numberOfNodesInBetween = 0;
@@ -93,15 +92,15 @@ public class UDPClient implements Runnable
 	        	 typeInError = false;
 			} catch (Exception e) 
 	        {
-				System.out.println("Wprowadz poprawna liczbe calkowita z przedzialu od 0 do " + ListOfNamesOfWorkingKnots.size());
+				System.out.println("Wprowadz poprawna liczbe calkowita z przedzialu od 0 do " + ListOfIPofWorkingKnots.size());
 				typeInError = true;
 			}
 	        
 	        if(!typeInError)
 	        {
-	        	if (numberOfNodesInBetween < 0 || numberOfNodesInBetween > ListOfNamesOfWorkingKnots.size() )
+	        	if (numberOfNodesInBetween < 0 || numberOfNodesInBetween > ListOfIPofWorkingKnots.size() )
 		        {
-		        	System.out.println("Wprowadz poprawna liczbe calkowita z przedzialu od 0 do " + ListOfNamesOfWorkingKnots.size());
+		        	System.out.println("Wprowadz poprawna liczbe calkowita z przedzialu od 0 do " + ListOfIPofWorkingKnots.size());
 		        }
 		        else 
 		        {
@@ -139,7 +138,7 @@ public class UDPClient implements Runnable
 	{
 		LinkedList<String> ListOfNodesToVisit = new LinkedList<String>();
 		meetNodes();
-		LinkedList<String> ListOfNotVisitedNodes = ListOfNamesOfWorkingKnots;
+		LinkedList<String> ListOfNotVisitedNodes = ListOfIPofWorkingKnots;
 		
 		for (int i=0; i <numberOfNodes; i++)
 		{
