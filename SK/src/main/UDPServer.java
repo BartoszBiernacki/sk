@@ -1,3 +1,5 @@
+package main;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -7,6 +9,7 @@ public class UDPServer {
 
     public static void main(String[] args) throws Exception{
 
+    	System.out.println("SERVER WYSTARTOWAL");
         //Otwarcie gniazda z okreslonym portem
         DatagramSocket datagramSocket = new DatagramSocket(Config.PORT);
 
@@ -28,6 +31,7 @@ public class UDPServer {
             System.out.println("Wiadomosc do przerobienia:");
             System.out.println(message);
             
+            /*
             //liczy int+int=suma
             String[] liczbaStr = message.split("+");
             int[] liczba = new int[liczbaStr.length];
@@ -35,8 +39,10 @@ public class UDPServer {
             	liczba[i] = Integer.parseInt(liczbaStr[i]);  
             int suma = liczba[0] + liczba[1];
             String zwrotna = Integer.toString(suma);
+            */
             
             //odsyla z powrotem do ostatniego wezla
+            String zwrotna = "MOJA ODP";
             byteResponse = zwrotna.getBytes("utf8");
             Thread.sleep(1000); 
             DatagramPacket responce = new DatagramPacket( 
